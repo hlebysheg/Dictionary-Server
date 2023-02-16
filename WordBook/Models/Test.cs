@@ -20,6 +20,6 @@ namespace WordBook.Models
         public Score? Score { get; set; }
         //ref
         //public Student Author { get; set; }
-        public List<TestToLetter> TestToLetters { get; set; }
+        public List<Answer> Answer { get; set; }
     }
 }

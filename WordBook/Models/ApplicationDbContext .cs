@@ -8,7 +8,7 @@ namespace WordBook.Models
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-           Database.EnsureCreated();   // создаем базу данных при первом обращении
+           Database.EnsureCreated();
         }
 
         public DbSet<Student> Student { get; set; }
@@ -16,7 +16,6 @@ namespace WordBook.Models
         public DbSet<Letter> Letters { get; set; }
         public DbSet<RefreshToken>  RefreshTokens { get; set; }
         public DbSet<Test> Tests { get; set; }
-        public DbSet<TestToLetter> TestToLetters { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<TestToStudent> TestToStudents { get; set; }
     }

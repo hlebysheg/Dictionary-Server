@@ -1,15 +1,30 @@
 ﻿using WordBook.Helpers;
 using WordBook.Models;
+using WordBook.reposit.Interface;
 
 namespace WordBook.reposit
 {
-    public class _userRep
+    public class _userRep: IAuthRep
     {
         private readonly ApplicationDbContext db;
         public _userRep(ApplicationDbContext context)
         {
             db = context;
         }
+
+        private void setUsed(RefreshToken token)
+        {
+            token.Used = true;
+            db.RefreshTokens.Update(token);
+            db.SaveChanges();
+        }
+
+        public void create(RefreshToken refTokenToResponse)
+        {
+            db.RefreshTokens.Add(refTokenToResponse);
+            db.SaveChanges();
+        }
+
         public Student? Auth(string? name, string? pass)
         {
             Student? strudent = db.Student.FirstOrDefault(p => p.Name == name);
@@ -23,7 +38,7 @@ namespace WordBook.reposit
             return null;
         }
 
-        public string Reg(string name, string pass, string email)
+        public bool Reg(string name, string pass, string email)
         {
             Student? IsStudentName = db.Student.FirstOrDefault(p => p.Name == name);
             Student? IsStudentEmail = db.Student.FirstOrDefault(p => p.Email == email);
@@ -39,22 +54,10 @@ namespace WordBook.reposit
                 db.Student.Add(student);
                 db.SaveChanges();
 
-                return "created" ;
+                return true ;
             }
 
-            if(IsStudentEmail != null)
-            {
-                return "try another mail";   
-            }
-
-            return "try another name";
-        }
-
-        public void setUsed(RefreshToken token)
-        {
-            token.Used = true;
-            db.RefreshTokens.Update(token);
-            db.SaveChanges();
+            return false;
         }
 
         public Student? getUserByToken(RefreshToken token) 
@@ -62,15 +65,20 @@ namespace WordBook.reposit
             return db.Student.FirstOrDefault(p => p.Id == token.StudentId);
         }
 
-        public RefreshToken? FindToken (string token)
+        public RefreshToken? TokenFind(string token)
         {
-            return db.RefreshTokens.SingleOrDefault(p => p.Token == token);
-        }
+            RefreshToken? tkn = db.RefreshTokens.SingleOrDefault(p => p.Token == token);
 
-        public void saveToken (RefreshToken refTokenToResponse)
-        {
-            db.RefreshTokens.Add(refTokenToResponse);
-            db.SaveChanges();
+            if (tkn == null 
+                || tkn.ExpiryData < DateTime.UtcNow 
+                || tkn.Used)
+            {
+                return null;
+            }
+
+            setUsed(tkn);
+
+            return tkn;
         }
 
         public bool deleteToken (string token)

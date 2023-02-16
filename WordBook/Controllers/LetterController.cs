@@ -5,6 +5,7 @@ using WordBook.Helpers.RequestHelpersShema;
 using WordBook.Helpers.ResponseHelpersShema;
 using WordBook.Models;
 using WordBook.reposit;
+using WordBook.reposit.letterRepository;
 
 namespace WordBook.Controllers
 {
@@ -13,12 +14,12 @@ namespace WordBook.Controllers
     public class LetterController : ControllerBase
     {
         private readonly ILogger<UserLogin> _logger;
-        private _letterRep db;
+        private readonly ILetterRepository db;
         private IConfiguration _conf;
-        public LetterController(ApplicationDbContext context, IConfiguration config, ILogger<UserLogin>? log)
+        public LetterController(ILetterRepository context, IConfiguration config, ILogger<UserLogin>? log)
         {
 
-            db = new _letterRep(context);
+            db = context;
             _conf = config;
             _logger = log;
         }
@@ -29,7 +30,7 @@ namespace WordBook.Controllers
         public IActionResult CreateLetter([FromBody] LetterRequest letter)
         {//add User.identity.name == book.author
             
-            Letter? word = db.addLetter(letter);
+            Letter? word = db.create(letter);
 
             if (word != null)
             {
@@ -48,7 +49,7 @@ namespace WordBook.Controllers
         {//add User.identity.name == book.author
 
             string name = User.Identity.Name;
-            bool isDeleteWord = db.deleteLetter(id, name);
+            bool isDeleteWord = db.delete(id, name);
 
             if (isDeleteWord)
             {
@@ -67,7 +68,7 @@ namespace WordBook.Controllers
             string name = User.Identity.Name;
 
 
-            Letter putBook = db.putLetter(wrReq, name);
+            Letter? putBook = db.update(wrReq, name);
 
             if (putBook != null)
             {
@@ -85,7 +86,7 @@ namespace WordBook.Controllers
         public IActionResult GetLetter(int id)
         {
 
-            List<Letter> letters = db.getLetter(id);
+            List<Letter>? letters = db.get(id);
 
             if (letters != null)
             {

@@ -11,7 +11,11 @@ namespace WordBook.Models
         [Required]
         public string Translate { get; set; }
         public bool Correct { get; set; }
-
-        //ref
+        //ref value
+        public int LetterId { get; set; }
+        public Letter Letter { get; set; }
+        //test ref
+        public int TestId { get; set; }
+        public Test Test { get; set; }
     }
 }

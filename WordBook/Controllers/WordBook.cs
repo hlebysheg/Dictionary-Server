@@ -5,6 +5,7 @@ using WordBook.Helpers;
 using WordBook.Helpers.ResponseHelpers;
 using WordBook.Models;
 using WordBook.reposit;
+using WordBook.reposit.Interface;
 
 namespace WordBook.Controllers
 {
@@ -14,12 +15,12 @@ namespace WordBook.Controllers
     public class WordBook : ControllerBase
     {
         private readonly ILogger<UserLogin> _logger;
-        private _wordBook db;
+        private readonly IWoordBook db;
         private IConfiguration _conf;
-        public WordBook(ApplicationDbContext context, IConfiguration config, ILogger<UserLogin>? log)
+        public WordBook(IWoordBook context, IConfiguration config, ILogger<UserLogin>? log)
         {
 
-            db = new _wordBook(context);
+            db = context;
             _conf = config;
             _logger = log;
         }
@@ -30,7 +31,7 @@ namespace WordBook.Controllers
         public IActionResult CreateWordBook([FromBody] WordBookRequest book)
         {//add User.identity.name == book.author
             string name = User.Identity.Name;
-            Dictionary? wordBook = db.addWordBook(book, name);
+            Dictionary? wordBook = db.create(book, name);
 
             if (wordBook != null)
             {
@@ -49,7 +50,7 @@ namespace WordBook.Controllers
         {//add User.identity.name == book.author
 
             string name = User.Identity.Name;
-            bool isDeleteWordBook = db.deleteBook(id, name);
+            bool isDeleteWordBook = db.delete(id, name);
 
             if (isDeleteWordBook)
             {
@@ -72,7 +73,7 @@ namespace WordBook.Controllers
                 return BadRequest("cant put");
             }
 
-            Dictionary PutBook = db.putBook(wdReq, name);
+            Dictionary PutBook = db.update(wdReq, name);
 
             if (PutBook != null)
             {
@@ -97,7 +98,7 @@ namespace WordBook.Controllers
                 return BadRequest("cant put");
             }
 
-            List<Dictionary> dicts = db.getDict(name);
+            List<Dictionary> dicts = db.getByName(name);
 
             if (dicts != null)
             {

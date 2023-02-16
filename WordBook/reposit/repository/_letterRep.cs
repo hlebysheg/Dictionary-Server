@@ -1,17 +1,19 @@
 ﻿using WordBook.Helpers.RequestHelpersShema;
 using WordBook.Models;
+using WordBook.reposit.letterRepository;
 
 namespace WordBook.reposit
 {
-    public class _letterRep
+    public class _letterRep: ILetterRepository
     {
         private readonly ApplicationDbContext db;
+        //ApplicationDbContext context
         public _letterRep(ApplicationDbContext context)
         {
             db = context;
         }
 
-        public Letter? addLetter(LetterRequest letter)
+        public Letter? create(LetterRequest letter)
         {
             Dictionary book = db.Dictionary.Find(letter.DictId);
             
@@ -33,7 +35,7 @@ namespace WordBook.reposit
             return null;
         }
 
-        public bool deleteLetter(int id, string? authorName)
+        public bool delete(int id, string? authorName)
         {
             Student student = db.Student.FirstOrDefault(p => p.Name == authorName);
             Letter letter = db.Letters.Find(id);
@@ -43,7 +45,7 @@ namespace WordBook.reposit
             bool isAuthorCorrect = false;
             try
             {
-                isAuthorCorrect = student.Name == author.Name;
+                isAuthorCorrect = student?.Name == author?.Name;
             }
             catch (Exception ex)
             {
@@ -65,18 +67,18 @@ namespace WordBook.reposit
         }
 
         //putBook
-        public Letter? putLetter(LetterRequest letter, string? authorName)
+        public Letter? update(LetterRequest letter, string? authorName)
         {
-            Student student = db.Student.FirstOrDefault(p => p.Name == authorName);
-            Dictionary wordBook = db.Dictionary.Find(letter.DictId);
-            Letter word = db.Letters.Find(letter.Id);
-            Student author = db.Student.Find(wordBook.Author.Id);
+            Student? student = db.Student.FirstOrDefault(p => p.Name == authorName);
+            Dictionary? wordBook = db.Dictionary.Find(letter.DictId);
+            Letter? word = db.Letters.Find(letter.Id);
+            Student? author = db.Student.Find(wordBook?.Author.Id);
 
 
             bool isAuthorCorrect = false;
             try
             {
-                isAuthorCorrect = student.Name == author.Name;
+                isAuthorCorrect = student?.Name == author?.Name;
             }
             catch (Exception ex)
             {
@@ -99,9 +101,13 @@ namespace WordBook.reposit
             return null;
         }
 
-        public List<Letter>? getLetter(int id)
+        public List<Letter>? get(int id)
         {
-            Dictionary book = db.Dictionary.FirstOrDefault(p => p.Id == id);
+            Dictionary? book = db.Dictionary.FirstOrDefault(p => p.Id == id);
+            
+            if(book == null) 
+                return null;
+
             try
             {
                 var result = db.Letters.Where(p => p.DictionaryId == book.Id).ToList();

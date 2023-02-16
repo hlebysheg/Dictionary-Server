@@ -7,6 +7,7 @@ using WordBook.Helpers.ResponseHelpers;
 using WordBook.Helpers.ResponseHelpersShema;
 using WordBook.Models;
 using WordBook.reposit;
+using WordBook.reposit.Interface;
 
 namespace WordBook.Controllers
 {
@@ -15,12 +16,12 @@ namespace WordBook.Controllers
     public class TestControllers : ControllerBase
     {
         private readonly ILogger<UserLogin> _logger;
-        private _testRep db;
+        private readonly ITestRep db;
         private IConfiguration _conf;
-        public TestControllers(ApplicationDbContext context, IConfiguration config, ILogger<UserLogin>? log)
+        public TestControllers(ITestRep context, IConfiguration config, ILogger<UserLogin>? log)
         {
 
-            db = new _testRep(context);
+            db = context;
             _conf = config;
             _logger = log;
         }
@@ -31,7 +32,7 @@ namespace WordBook.Controllers
         public IActionResult getTest() 
         {
             string name = User.Identity.Name;
-            TestResponse? letter = db.getAllByAthor(name);
+            TestResponse? letter = db.CreateTestByName(name);
 
             if (letter == null)
             {
@@ -46,11 +47,11 @@ namespace WordBook.Controllers
         public IActionResult FinishTest([FromBody] TestResultRequest test)
         {
             string name = User.Identity.Name;
-            TestResultRespones? testResult = db.FinshTest(test);
+            Test? testResult = db.FinshTest(test);
 
             if (testResult == null)
             {
-                return Ok();
+                return BadRequest();
             }
             return Ok(testResult);
         }

@@ -1,9 +1,11 @@
 ﻿
 using WordBook.Helpers;
 using WordBook.Models;
+using WordBook.reposit.Interface;
+
 namespace WordBook.reposit
 {
-    public class _wordBook
+    public class _wordBook: IWoordBook
     {
         private readonly ApplicationDbContext db;
         public _wordBook(ApplicationDbContext context)
@@ -11,7 +13,7 @@ namespace WordBook.reposit
             db = context;
         }
 
-        public Dictionary? addWordBook(WordBookRequest book, string? authorName)
+        public Dictionary? create(WordBookRequest book, string? authorName)
         {
             Student student = db.Student.FirstOrDefault(p=> p.Name == authorName);
             if (student != null)
@@ -31,11 +33,13 @@ namespace WordBook.reposit
             return null;
         }
 
-        public bool deleteBook(int id, string? authorName)
+        public bool delete(int id, string? authorName)
         {
-            Student student = db.Student.FirstOrDefault(p => p.Name == authorName);
-            Dictionary wordBook = db.Dictionary.Find(id);
-            List<Letter> letters = db.Letters.Where(p => p.DictionaryId == wordBook.Id).ToList();
+            Student? student = db.Student.FirstOrDefault(p => p.Name == authorName);
+            Dictionary? wordBook = db.Dictionary.Find(id);
+            List<Letter>? letters = db.Letters.Where(p => p.DictionaryId == wordBook.Id).ToList();
+            if (student == null || wordBook == null)
+                return false;
 
             bool isAuthorCorrect = false;
             try
@@ -46,10 +50,8 @@ namespace WordBook.reposit
             {
                 return false;
             }
-            bool isStudent = student != null;
-            bool isWordBook = wordBook != null; 
 
-            if (isAuthorCorrect && isStudent && isWordBook)
+            if (isAuthorCorrect)
             {
                 db.Letters.RemoveRange(letters);
 
@@ -64,7 +66,7 @@ namespace WordBook.reposit
         }
 
         //putBook
-        public Dictionary? putBook(WordBookRequest book, string? authorName)
+        public Dictionary? update(WordBookRequest book, string? authorName)
         {
             Student student = db.Student.FirstOrDefault(p => p.Name == authorName);
             Dictionary wordBook = db.Dictionary.Find(book.Id);
@@ -93,7 +95,7 @@ namespace WordBook.reposit
             return null;
         }
 
-        public List<Dictionary> getDict(string authorName)
+        public List<Dictionary> getByName(string authorName)
         {
             Student student = db.Student.FirstOrDefault(p => p.Name == authorName);
             List<Dictionary> result = db.Dictionary.Where(p => p.Author == student).ToList();

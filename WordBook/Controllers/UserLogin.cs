@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+
 using WordBook.Helpers;
 using WordBook.Helpers.RequestHelpersShema;
 using WordBook.Models;
 using WordBook.reposit;
+using WordBook.reposit.Interface;
+using WordBook.service.Interface;
 
 namespace WordBook.Controllers
 {
@@ -17,14 +16,16 @@ namespace WordBook.Controllers
     public class UserLogin : ControllerBase
     {
         private readonly ILogger<UserLogin> _logger;
-        private _userRep db;
+        private readonly IAuthRep db;
         private IConfiguration _conf;
-        public UserLogin(ApplicationDbContext context, IConfiguration config, ILogger<UserLogin>? log)
+        IGenerateJWT _generator;
+        public UserLogin(IAuthRep context, IConfiguration config, ILogger<UserLogin>? log, IGenerateJWT generator)
         {
 
-            db = new _userRep(context);
+            db = context;
             _conf = config;
             _logger = log;
+            _generator = generator;
         }
 
         [AllowAnonymous]
@@ -32,12 +33,11 @@ namespace WordBook.Controllers
         [Route("log")]
         public IActionResult Login([FromBody] StudentRequest logData)
         {
-           
             var student = db.Auth(logData.Name, logData.Password);
             if (student != null)
             {
-                var token = Generate(student);
-                var TokenContext = GenerateRandomStr(25);
+                var token = _generator.Generate(student);
+                var TokenContext = _generator.GenerateRandomStr(25);
                 var refTokenToResponse = new RefreshToken
                 {
                     Used = false,
@@ -47,12 +47,12 @@ namespace WordBook.Controllers
                     Student = student,
                     Token = TokenContext + Guid.NewGuid()
                 };
-                db.saveToken(refTokenToResponse);
+                db.create(refTokenToResponse);
 
                 TokenResponse resp = new TokenResponse
                 {
                     RefreshToken = refTokenToResponse.Token,
-                    AccesToken = Generate(student)
+                    AccesToken = _generator.Generate(student)
                 };
 
                 return Ok(resp);
@@ -67,28 +67,20 @@ namespace WordBook.Controllers
         {
             string refreshToken = token.Token;
 
-            var storedToken = db.FindToken(refreshToken);
-            if (storedToken == null)
+            var storedToken = db.TokenFind(refreshToken);
+            if(storedToken == null)
             {
-                return NotFound("token not found");
+                return BadRequest("auth fail");
             }
-            if(storedToken.ExpiryData < DateTime.UtcNow)
-            {
-                return BadRequest("time out");
-            }
-            if (storedToken.Used)
-            {
-                return BadRequest("used");
-            }
-
-            db.setUsed(storedToken);
 
             var user = db.getUserByToken(storedToken);
+
             if (user == null)
             {
                 return BadRequest("user not found");
             }
-            var TokenContext = GenerateRandomStr(25);
+            //generate token
+            var TokenContext = _generator.GenerateRandomStr(25);
             var refTokenToResponse = new RefreshToken
             {
                 Used = false,
@@ -98,12 +90,12 @@ namespace WordBook.Controllers
                 Student = user,
                 Token = TokenContext + Guid.NewGuid()
             };
-            db.saveToken(refTokenToResponse);
+            db.create(refTokenToResponse);
 
             TokenResponse resp = new TokenResponse
             {
                 RefreshToken = refTokenToResponse.Token,
-                AccesToken = Generate(user)
+                AccesToken = _generator.Generate(user)
             };
 
             return Ok(resp); 
@@ -116,7 +108,7 @@ namespace WordBook.Controllers
         {
             string refreshToken = token.Token;
 
-            var storedToken = db.FindToken(refreshToken);
+            var storedToken = db.TokenFind(refreshToken);
             if (storedToken == null)
             {
                 return NotFound("token not found");
@@ -124,7 +116,7 @@ namespace WordBook.Controllers
 
             if (db.deleteToken(refreshToken))
             {
-                return Ok("deleted");
+                return Ok("Logout");
             }
 
             return BadRequest("token not found");
@@ -135,44 +127,14 @@ namespace WordBook.Controllers
         [Route("reg")]
         public IActionResult Register([FromBody] StudentRequest student)
         {
-            string msg = db.Reg(student.Name, student.Password, student.Email);
+            var isCreated = db.Reg(student.Name, student.Password, student.Email);
             //var isReg = true;
-            if(msg != "created")
+            if(isCreated)
             {
-                return BadRequest(msg);
+                return Ok("create");
             }
-            return Ok(msg);
+            return BadRequest("try another login or email");
         }
-        private string Generate(Student student)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_conf["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, student.Name),
-                new Claim(ClaimTypes.Email, student.Email)
-            };
-            var token = new JwtSecurityToken(_conf["Jwt:Issuer"],
-                _conf["Jwt:Audience"],
-                claims, expires: DateTime.Now.AddMinutes(120),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private string GenerateRandomStr (int len)
-        {
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var stringChars = new char[len];
-            var random = new Random();
-
-            for (int i = 0; i < stringChars.Length; i++)
-            {
-                stringChars[i] = chars[random.Next(chars.Length)];
-            }
-
-            return new String(stringChars);
-        }
+        
     }
 }
