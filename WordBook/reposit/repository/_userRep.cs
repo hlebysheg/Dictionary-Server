@@ -25,9 +25,9 @@ namespace WordBook.reposit
             db.SaveChanges();
         }
 
-        public Student? Auth(string? name, string? pass)
+        public StudentLogin? Auth(string? email, string? pass)
         {
-            Student? strudent = db.Student.FirstOrDefault(p => p.Name == name);
+            StudentLogin? strudent = db.StudentLogin.FirstOrDefault(p => p.Email == email);
             if (strudent != null)
             {
                 if(HashPassword.Verif(pass, strudent.Password))
@@ -40,18 +40,22 @@ namespace WordBook.reposit
 
         public bool Reg(string name, string pass, string email)
         {
-            Student? IsStudentName = db.Student.FirstOrDefault(p => p.Name == name);
-            Student? IsStudentEmail = db.Student.FirstOrDefault(p => p.Email == email);
+            StudentLogin? IsStudentName = db.StudentLogin.FirstOrDefault(p => p.Name == name);
+            StudentLogin? IsStudentEmail = db.StudentLogin.FirstOrDefault(p => p.Email == email);
 
             if (IsStudentName == null && IsStudentEmail == null)
             {
-                Student student = new Student
+                StudentLogin student = new StudentLogin
                 {
                     Name = name,
                     Email = email,
                     Password = HashPassword.HashPass(pass)
                 };
-                db.Student.Add(student);
+                StudentInfo info = new StudentInfo { DisplayName = name, StudentLogin = student};
+
+                db.StudentLogin.Add(student);
+                db.StudentInfo.Add(info);
+
                 db.SaveChanges();
 
                 return true ;
@@ -60,9 +64,9 @@ namespace WordBook.reposit
             return false;
         }
 
-        public Student? getUserByToken(RefreshToken token) 
+        public StudentLogin? getUserByToken(RefreshToken token) 
         {
-            return db.Student.FirstOrDefault(p => p.Id == token.StudentId);
+            return db.StudentLogin.FirstOrDefault(p => p.Id == token.StudentId);
         }
 
         public RefreshToken? TokenFind(string token)

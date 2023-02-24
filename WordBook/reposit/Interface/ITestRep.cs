@@ -7,7 +7,7 @@ namespace WordBook.reposit.Interface
     public interface ITestRep
     {
         TestResponse? CreateTestByName(string name);
-        TestResponse? CreateTestByDict(List<int> dictId, Student? student);
+        TestResponse? CreateTestByDict(List<int> dictId, StudentLogin? student);
         Test? FinshTest(TestResultRequest TestResult);
     }
 }

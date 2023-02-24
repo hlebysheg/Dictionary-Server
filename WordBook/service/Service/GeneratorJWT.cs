@@ -14,7 +14,7 @@ namespace WordBook.service.Service
         {
             _conf = config;
         }
-        public string Generate(Student student)
+        public string Generate(StudentLogin student)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_conf["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

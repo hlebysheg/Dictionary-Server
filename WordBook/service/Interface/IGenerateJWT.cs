@@ -4,7 +4,7 @@ namespace WordBook.service.Interface
 {
     public interface IGenerateJWT
     {
-        string Generate(Student student);
+        string Generate(StudentLogin student);
         string GenerateRandomStr(int len);
     }
 }

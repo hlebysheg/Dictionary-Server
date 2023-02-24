@@ -5,6 +5,15 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordBook", "WordBook\WordBook.csproj", "{82071C99-278A-4ACD-981B-5A344B1CB7A1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{135D4319-714F-4698-A4B4-C4C0E63F9580}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.dcproj = docker-compose.dcproj
+		docker-compose.override.yml = docker-compose.override.yml
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Новая папка", "Новая папка", "{1FA16A9E-421A-47E8-ABDF-3A76A25AFAA1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

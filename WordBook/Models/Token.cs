@@ -12,7 +12,7 @@ namespace WordBook.Models
         public bool Used { get; set; }
 
         public int StudentId { get; set; }
-        public Student Student { get; set; }
+        public StudentLogin Student { get; set; }
        
 
     }

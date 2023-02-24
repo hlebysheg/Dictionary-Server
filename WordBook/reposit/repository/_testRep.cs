@@ -15,7 +15,7 @@ namespace WordBook.reposit
 
         public TestResponse? CreateTestByName (string name)
         {
-            Student student = db.Student.FirstOrDefault(p => p.Name == name);
+            StudentLogin student = db.StudentLogin.FirstOrDefault(p => p.Name == name);
             var dictionary = db.Dictionary.Where(a  => a.Author.Id == student.Id).ToList();
 
             if (student == null)
@@ -27,7 +27,7 @@ namespace WordBook.reposit
             return CreateTestByDict(dictId, student);
         }
 
-        public TestResponse? CreateTestByDict(List<int> dictId, Student? student = null)
+        public TestResponse? CreateTestByDict(List<int> dictId, StudentLogin? student = null)
         {
             List<Letter> letters = db.Letters.Where(a => dictId.Contains(a.DictionaryId) ).ToList();
 
@@ -40,7 +40,7 @@ namespace WordBook.reposit
 
             db.TestToStudents.Add(new TestToStudent
             {
-                Student = student,
+                StudentLogin = student,
                 Test = test,
             });
 

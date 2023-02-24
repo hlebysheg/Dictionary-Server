@@ -33,7 +33,7 @@ namespace WordBook.Controllers
         [Route("log")]
         public IActionResult Login([FromBody] StudentRequest logData)
         {
-            var student = db.Auth(logData.Name, logData.Password);
+            var student = db.Auth(logData.Email, logData.Password);
             if (student != null)
             {
                 var token = _generator.Generate(student);
@@ -55,7 +55,7 @@ namespace WordBook.Controllers
                     AccesToken = _generator.Generate(student)
                 };
 
-                return Ok(resp);
+                return Ok(new { resp, student.Name });
             }
             return NotFound("User not found");
         }
@@ -127,7 +127,7 @@ namespace WordBook.Controllers
         [Route("reg")]
         public IActionResult Register([FromBody] StudentRequest student)
         {
-            var isCreated = db.Reg(student.Name, student.Password, student.Email);
+            var isCreated = db.Reg(student.Name ,student.Password, student.Email);
             //var isReg = true;
             if(isCreated)
             {

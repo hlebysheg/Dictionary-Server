@@ -37,58 +37,23 @@ namespace WordBook.reposit
 
         public bool delete(int id, string? authorName)
         {
-            Student student = db.Student.FirstOrDefault(p => p.Name == authorName);
             Letter letter = db.Letters.Find(id);
-            Dictionary wordBook = db.Dictionary.Find(letter.DictionaryId);
-            Student author = db.Student.Find(wordBook.Author.Id);
 
-            bool isAuthorCorrect = false;
-            try
-            {
-                isAuthorCorrect = student?.Name == author?.Name;
-            }
-            catch (Exception ex)
-            {
+            if (letter == null)
                 return false;
-            }
-            bool isStudent = student != null;
-            bool isWordBook = wordBook != null;
-            bool isLetter = letter != null;
 
-            if (isAuthorCorrect && isStudent && isWordBook && isLetter)
-            {
-                db.Letters.Remove(letter);
-                db.SaveChanges();
+            db.Letters.Remove(letter);
+            db.SaveChanges();
 
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
         //putBook
         public Letter? update(LetterRequest letter, string? authorName)
         {
-            Student? student = db.Student.FirstOrDefault(p => p.Name == authorName);
-            Dictionary? wordBook = db.Dictionary.Find(letter.DictId);
-            Letter? word = db.Letters.Find(letter.Id);
-            Student? author = db.Student.Find(wordBook?.Author.Id);
+            Letter word = db.Letters.Find(letter.Id);
 
-
-            bool isAuthorCorrect = false;
-            try
-            {
-                isAuthorCorrect = student?.Name == author?.Name;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-            bool isStudent = student != null;
-            bool isWordBook = wordBook != null;
-            bool isLetter = letter != null;
-
-            if (isAuthorCorrect && isStudent && isWordBook && isLetter)
+            if (word != null)
             {
                 word.Anotation = letter.Anotation;
                 word.Word = letter.Word;

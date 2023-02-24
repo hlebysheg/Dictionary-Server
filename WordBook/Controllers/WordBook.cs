@@ -91,14 +91,7 @@ namespace WordBook.Controllers
         public IActionResult GetDicts(string author)
         {//add User.identity.name == book.author
 
-            string name = User.Identity.Name;
-
-            if (name != author)
-            {
-                return BadRequest("cant put");
-            }
-
-            List<Dictionary> dicts = db.getByName(name);
+            List<Dictionary> dicts = db.getByName(author);
 
             if (dicts != null)
             {
@@ -118,7 +111,7 @@ namespace WordBook.Controllers
             {
                 Title = dir.Title,
                 Language = dir.language,
-                Author = dir.Author.Name,
+                Author = dir.Author.DisplayName,
                 Id = dir.Id,
             };
         }

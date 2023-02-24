@@ -17,7 +17,7 @@ namespace WordBook.Models
         public string Title { get; set; }
 
         //ref
-        public Student Author { get; set; }
+        public StudentInfo Author { get; set; }
         public List<Letter> Letters { get; set; }
     }
 }
