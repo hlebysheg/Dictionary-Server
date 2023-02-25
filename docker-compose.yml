@@ -1,31 +1,46 @@
 version: '3.4'
 
 services:
+
+  #front:
+  #  image: angular
+  #  build:
+  #    context: ./Dictionary
+  #    dockerfile: Dictionary/Dockerfile
+  #  ports:
+  #    - "8020:81"   
+  #  links:
+  #    - wordbook
+
   wordbook:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
     image: ${DOCKER_REGISTRY-}wordbook
     build:
       context: .
       dockerfile: WordBook/Dockerfile
     ports:
-      - "8000:80"     
-    environment:
-      DB_CONNECTION_STRING: "host=postgres_image;port=5432;database=blogdb;username=bloguser;password=bloguser"
+      - "8000:80"   
+      - "8001:443" 
     links:
       - postgres_image
 
+  #db:
+  #  image: "mcr.microsoft.com/mssql/server:2022-latest"
+  #  ports:
+  #    - "1433:1433"
+    
+  #  environment:
+  #      SA_PASSWORD: "S3cur3P@ssW0rd!"
+  #      ACCEPT_EULA: "Y"
+  
   postgres_image:
     image: postgres:latest
     ports:
       - "5432"
     restart: always
-    volumes:
-      - db_volume:/var/lib/postgresql/data
-      - ./dbscripts/seed.sql :/docker-entrypoint-initdb.d/seed.sql
+    #volumes:
+    #  - db_volume:/var/lib/postgresql/data
+    #  - ./dbscripts/seed.sql :/docker-entrypoint-initdb.d/seed.sql
     environment:
       POSTGRES_USER: "bloguser"
       POSTGRES_PASSWORD: "bloguser"
       POSTGRES_DB: "blogdb"
-volumes:
-  db_volume:

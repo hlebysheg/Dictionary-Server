@@ -29,9 +29,8 @@ builder.Services.AddCors(options =>
                                 .AllowAnyMethod();
                           });
 });
-var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 builder.Services.AddDbContext<ApplicationDbContext>(opts =>
-        opts.UseNpgsql(connectionString));
+        opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddTransient<_userRep>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -90,7 +89,6 @@ builder.Services.AddSwaggerGen(opt =>
         }
     });
 });
-
 
 var app = builder.Build();
 
