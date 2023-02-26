@@ -30,7 +30,7 @@ builder.Services.AddCors(options =>
                           });
 });
 builder.Services.AddDbContext<ApplicationDbContext>(opts =>
-        opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        opts.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddTransient<_userRep>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

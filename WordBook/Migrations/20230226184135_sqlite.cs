@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace WordBook.Migrations
 {
-    public partial class first : Migration
+    public partial class sqlite : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,11 +13,11 @@ namespace WordBook.Migrations
                 name: "StudentLogin",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    Password = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,11 +28,11 @@ namespace WordBook.Migrations
                 name: "Tests",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    FinalTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Score = table.Column<int>(type: "integer", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreationTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    FinalTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Score = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -44,13 +43,13 @@ namespace WordBook.Migrations
                 name: "RefreshTokens",
                 columns: table => new
                 {
-                    JwtId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Token = table.Column<string>(type: "text", nullable: false),
-                    CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ExpiryData = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Used = table.Column<bool>(type: "boolean", nullable: false),
-                    StudentId = table.Column<int>(type: "integer", nullable: false)
+                    JwtId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Token = table.Column<string>(type: "TEXT", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ExpiryData = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Used = table.Column<bool>(type: "INTEGER", nullable: false),
+                    StudentId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,10 +66,10 @@ namespace WordBook.Migrations
                 name: "StudentInfo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    DisplayName = table.Column<string>(type: "text", nullable: false),
-                    StudentLoginId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DisplayName = table.Column<string>(type: "TEXT", nullable: false),
+                    StudentLoginId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,11 +86,11 @@ namespace WordBook.Migrations
                 name: "TestToStudents",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StudentId = table.Column<int>(type: "integer", nullable: false),
-                    StudentLoginId = table.Column<int>(type: "integer", nullable: false),
-                    TestId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    StudentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    StudentLoginId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TestId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -114,11 +113,11 @@ namespace WordBook.Migrations
                 name: "Dictionary",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    language = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    Title = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    AuthorId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    language = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    AuthorId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -135,12 +134,12 @@ namespace WordBook.Migrations
                 name: "Letter",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Word = table.Column<string>(type: "text", nullable: false),
-                    Translate = table.Column<string>(type: "text", nullable: false),
-                    Anotation = table.Column<string>(type: "text", nullable: false),
-                    DictionaryId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Word = table.Column<string>(type: "TEXT", nullable: false),
+                    Translate = table.Column<string>(type: "TEXT", nullable: false),
+                    Anotation = table.Column<string>(type: "TEXT", nullable: false),
+                    DictionaryId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -157,13 +156,13 @@ namespace WordBook.Migrations
                 name: "Answers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Word = table.Column<string>(type: "text", nullable: false),
-                    Translate = table.Column<string>(type: "text", nullable: false),
-                    Correct = table.Column<bool>(type: "boolean", nullable: false),
-                    LetterId = table.Column<int>(type: "integer", nullable: false),
-                    TestId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Word = table.Column<string>(type: "TEXT", nullable: false),
+                    Translate = table.Column<string>(type: "TEXT", nullable: false),
+                    Correct = table.Column<bool>(type: "INTEGER", nullable: false),
+                    LetterId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TestId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
